@@ -9,4 +9,3 @@ envparse
 ipython
 ipdb
 jinja2
-motor

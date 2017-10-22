@@ -20,8 +20,11 @@ DEBUG = env.bool('DEBUG', default=True)
 SITE_HOST = env.str('HOST')
 SITE_PORT = env.int('PORT')
 SECRET_KEY = env.str('SECRET_KEY')
-MONGO_HOST = env.str('MONGO_HOST')
-MONGO_DB_NAME = env.str('MONGO_DB_NAME')
+DB_HOST = env.str('DB_HOST')
+DB_PORT = input(env.str('DB_PORT'))
+DB_LOGIN = env.str('DB_LOGIN')
+DB_PASSWD = env.str('DB_PASSWD')
+DB_NAME = env.str('DB_NAME')
 
 MESSAGE_COLLECTION = 'messages'
 USER_COLLECTION = 'users'
