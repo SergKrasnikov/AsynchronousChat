@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form autocomplete="on">
+    <div id="error" style="color: red;"></div>
+    <div class="form-group">
+        <label>Create room
+            <input type="text" class="form-control" pattern="[A-Za-zА-Яа-я0-9]{3,}" placeholder="Room name" id="name" required>
+        </label>
+    </div>
+    <p>
+        <input class="btn btn-primary" id="submit_create" title="Create room" type="button" value="Create">
+    </p>
+</form>
+{{ content }}
+<form autocomplete="on">
+    <div class="form-group">
+        <label>Select room
+            <select class="form-control" id="room">
+                <option disabled selected>Select room name</option>
+                {% for room in rooms %}
+                    <option>{{ room.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <p>
+        <input class="btn btn-primary" id="submit_select" title="Enter" type="button" value="Enter">
+    </p>
+</form>
+{% endblock %}
+
+{% block footer %}
+<script src="{{ app.router.static.url(filename='js/admin.js') }}"></script>
+{% endblock %}
