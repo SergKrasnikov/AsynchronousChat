@@ -52,7 +52,7 @@ async def init(loop):
 
     # route part
     for route in routes:
-        # print(route[0], route[1], route[2], route[3])
+        print(route[0], route[1], route[2], route[3])
         app.router.add_route(route[0], route[1], route[2], name=route[3])
     app.router.add_static('/static', 'static', name='static')
     # end route part

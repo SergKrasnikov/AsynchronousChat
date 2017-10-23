@@ -1,4 +1,6 @@
 # virtualenv
+.idea
+.idea/
 .venv
 env
 .env

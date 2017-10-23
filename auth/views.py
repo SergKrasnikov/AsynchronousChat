@@ -31,6 +31,7 @@ class Login(web.View):
         return {'content': 'Please enter login or email'}
 
     async def post(self, *args, **kwargs):
+        """ AJAX """
         data = await self.request.post()
 
         user = UserMySQL(data)
@@ -94,34 +95,34 @@ class Admin(web.View):
 
     @aiohttp_jinja2.template('auth/admin.html', )
     async def get(self, *args, **kwargs):
-        log.debug('2222222222222222222')
         session = await get_session(self.request, )
         if session.get('user'):
             user = UserMySQL(data={'id': session['user'], }, )
-            user = await user.get_user_by_id()
-            return {'content': 'Please select room',
-                    'user': user,
+            return {'content': 'Please create or select room',
+                    'user': await user.get_user_by_id(),
                     'rooms': RoomMySQL.select(), }
         else:
-            log.debug('!!!!!!!!!!!!!!!!!!!!!')
             raise web.HTTPForbidden(body=b'Forbidden', )
 
     async def post(self, *args, **kwargs):
-        log.debug('111111111111111111111111')
         data = await self.request.post()
-
-        log.debug(data)
-
+        print('11111')
         room = RoomMySQL()
         name = data.get('name', False)
-        log.debug(name)
-
         if name:
             room = await room.create_room(name=name)
-            log.debug(room)
 
-            # result = await user.check_user()
+            dict_response = {'content_type': 'application/json',
+                             'status': 200,
+                             'charset': 'utf-8', }
 
-        # dict_response = {'content_type': 'application/json',
-        #                  'status': 200,
-        #                  'charset': 'utf-8', }
+            dict_response.update({'text': json.dumps({'result': 'Ok', 'redirect': '/admin/', }, ), }, )
+
+            return web.Response(**dict_response)
+
+        room = data.get('room', False)
+        log.debug('room111: %s' % room)
+        if room:
+            log.debug('room111: %s' % room)
+
+        redirect(self.request, 'redirect')

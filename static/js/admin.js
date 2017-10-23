@@ -1,16 +1,11 @@
 $(document).ready(function(){
 
-    $('#signin').click(function(){
-        window.location.href = "/signin/"
-    });
-
     function showError(error){
         $('#error').html(error)
     }
 
     $('#submit_create').click(function(){
         var name = $('#name').val();
-        console.log('Room name:' + name);
         if(name){
             $.post({
                 url: '/admin/',
@@ -30,4 +25,14 @@ $(document).ready(function(){
             showError('Please fill all fields')
         }
     });
+
+    $('#submit_select').click(function(){
+        var room = $('#room').val();
+        if(room){
+            $('form[name="room_select"]').submit();
+        }else{
+            showError('Please fill in the fields correctly')
+        }
+    });
+
 });

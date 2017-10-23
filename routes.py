@@ -1,8 +1,10 @@
-from chat.views import Rooms, ChatList, WebSocket
+from core.views import Redirect
 from auth.views import Login, SignIn, SignOut, Admin
+from chat.views import Rooms, ChatList, WebSocket
 
 
 routes = [
+    ('GET',        '/',          Redirect,   'redirect'),
     ('GET',        '/chat/',     ChatList,   'main'),
     ('GET',        '/ws/',       WebSocket,  'chat'),
     ('*',          '/admin/',    Admin,      'admin'),

@@ -26,7 +26,7 @@ class RoomMySQL(BaseMySQLModel, ):
 
     async def check_room(self, name, *args, **kwargs):
         try:
-            return await self.get(name=name, )
+            return self.get(name=name, )
         except self.DoesNotExist:
             return False
         except Exception as e:
@@ -61,7 +61,7 @@ class MessageMySQL(BaseMySQLModel, ):
     class Meta:
         db_table = 'tbl_message'
 
-    def __init__(self, db=False, data=False, **kw):
+    def __init__(self, db=False, data={}, **kw):
         if db:
             self._db = db
 
@@ -75,7 +75,7 @@ class MessageMySQL(BaseMySQLModel, ):
 
     async def check_user(self, **kw):
         try:
-            return await self.get(**{'login': self._login}, )
+            return self.get(**{'login': self._login}, )
         except Exception:
             return False
 
