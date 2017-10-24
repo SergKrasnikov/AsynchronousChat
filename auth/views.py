@@ -106,11 +106,10 @@ class Admin(web.View):
 
     async def post(self, *args, **kwargs):
         data = await self.request.post()
-        print('11111')
         room = RoomMySQL()
         name = data.get('name', False)
         if name:
-            room = await room.create_room(name=name)
+            await room.create_room(name=name)
 
             dict_response = {'content_type': 'application/json',
                              'status': 200,
@@ -123,6 +122,6 @@ class Admin(web.View):
         room = data.get('room', False)
         log.debug('room111: %s' % room)
         if room:
-            log.debug('room111: %s' % room)
+            redirect(self.request, 'main')
 
-        redirect(self.request, 'redirect')
+        redirect(self.request, 'admin')
