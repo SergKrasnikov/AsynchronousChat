@@ -1,9 +1,9 @@
 $(document).ready(function(){
     try{
-        var sock = new WebSocket('ws://' + window.location.host + '/ws');
+        var sock = new WebSocket('ws://' + window.location.host + '/ws/');
     }
     catch(err){
-        var sock = new WebSocket('wss://' + window.location.host + '/ws');
+        var sock = new WebSocket('wss://' + window.location.host + '/ws/');
     }
 
     // show message in div#subscribe
@@ -47,7 +47,7 @@ $(document).ready(function(){
     };
 
     $('#signout').click(function(){
-        window.location.href = "signout"
+        window.location.href = "/signout/"
     });
 
     sock.onclose = function(event){

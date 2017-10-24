@@ -1,6 +1,4 @@
 import json
-from time import time
-from bson.objectid import ObjectId
 
 import aiohttp_jinja2
 from aiohttp import web
@@ -10,15 +8,7 @@ from chat.models import RoomMySQL
 
 from settings import log
 from core.utils import redirect
-
-
-def set_session(session, user_id, ):
-    session['user'] = str(user_id)
-    session['last_visit'] = time()
-
-
-def convert_json(message):
-    return json.dumps({'error': message})
+from .utils import set_session, convert_json
 
 
 class Login(web.View):
@@ -26,6 +16,7 @@ class Login(web.View):
     @aiohttp_jinja2.template('auth/login.html')
     async def get(self, *args, **kwargs):
         session = await get_session(self.request)
+
         if session.get('user'):
             redirect(self.request, 'main')
         return {'content': 'Please enter login or email'}
@@ -43,7 +34,7 @@ class Login(web.View):
 
         if isinstance(result, UserMySQL, ):
             session = await get_session(self.request, )
-            set_session(session=session, user_id=result.id, )
+            set_session(session=session, user=result.id, )
 
             if result.is_admin:
                 dict_response.update({'text': json.dumps({'result': 'Ok', 'redirect': '/admin/', }, ), }, )
@@ -58,7 +49,7 @@ class Login(web.View):
 
 class SignIn(web.View):
 
-    @aiohttp_jinja2.template('auth/sign.html')
+    @aiohttp_jinja2.template('auth/signin.html')
     async def get(self, **kw):
         session = await get_session(self.request)
         if session.get('user'):
@@ -67,15 +58,11 @@ class SignIn(web.View):
 
     async def post(self, **kw):
         data = await self.request.post()
-        log.debug('SignIn: POST')
-        log.debug(data)
-        user = await UserMySQL(self.request.db, data, )
-        log.debug(self.request.db)
-        log.debug(user)
+        user = UserMySQL(data, )
         result = await user.create_user()
-        if isinstance(result, ObjectId):
+        if isinstance(result, UserMySQL):
             session = await get_session(self.request)
-            set_session(session=session, user_id=result.id, )
+            set_session(session=session, user=result.id, )
         else:
             return web.Response(content_type='application/json', text=convert_json(result))
 
@@ -106,6 +93,7 @@ class Admin(web.View):
 
     async def post(self, *args, **kwargs):
         data = await self.request.post()
+
         room = RoomMySQL()
         name = data.get('name', False)
         if name:
@@ -119,9 +107,10 @@ class Admin(web.View):
 
             return web.Response(**dict_response)
 
-        room = data.get('room', False)
-        log.debug('room111: %s' % room)
+        room_id = data.get('room', False)
         if room:
+            session = await get_session(self.request, )
+            set_session(session=session, room_id=room_id, )
             redirect(self.request, 'main')
 
         redirect(self.request, 'admin')

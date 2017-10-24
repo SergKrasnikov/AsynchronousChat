@@ -11,7 +11,7 @@ $(document).ready(function(){
     $('#submit').click(function(){
         var login = $('#login').val(),
             password = $('#password').val();
-        console.log('Login:' + login + ' | Password:' + password);
+        // console.log('Login:' + login + ' | Password:' + password);
         if(login && password){
             $.post({
                 url: '/login/',

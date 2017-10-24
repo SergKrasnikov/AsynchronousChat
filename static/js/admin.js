@@ -26,13 +26,4 @@ $(document).ready(function(){
         }
     });
 
-    $('#submit_select').click(function(){
-        var room = $('#room').val();
-        if(room){
-            $('form[name="room_select"]').submit();
-        }else{
-            showError('Please fill in the fields correctly')
-        }
-    });
-
 });

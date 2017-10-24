@@ -14,10 +14,10 @@
     </p>
 </form>
 {{ content }}
-<form autocomplete="on" name="room_select">
+<form autocomplete="on" name="room_select" action="." method="POST">
     <div class="form-group">
         <label>Select room
-            <select class="form-control" id="room">
+            <select class="form-control" name="room">
                 <option disabled selected value="0">Select room name</option>
                 {% for room in rooms %}
                     <option value="{{ room.id }}">{{ room.name }}</option>
@@ -26,11 +26,11 @@
         </label>
     </div>
     <p>
-        <input class="btn btn-primary" id="submit_select" title="Enter" type="button" value="Enter">
+        <input class="btn btn-primary" id="submit_select" title="Enter" type="submit" value="Enter">
     </p>
 </form>
 {% endblock %}
 
 {% block footer %}
-<script src="{{ app.router.static.url(filename='js/admin.js?ver=0.02') }}"></script>
+<script src="{{ app.router.static.url(filename='js/admin.js?ver=0.03') }}"></script>
 {% endblock %}

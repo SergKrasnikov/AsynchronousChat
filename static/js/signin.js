@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
     $('#login').click(function(){
-        window.location.href = "login"
+        window.location.href = "/login/"
     });
 
     function showError(error){
@@ -17,8 +17,7 @@ $(document).ready(function(){
         if(password.val() === password2.val()){
             console.log(login, 'if pass the same');
             if (login && email && password){
-                $.post('signin', {'login': login, 'email': email, 'password': password.val()}, function(data){
-                    console.log(data);
+                $.post('/signin/', {'login': login, 'email': email, 'password': password.val()}, function(data){
                     if (data.error){
                         showError(data.error)
                     }else{

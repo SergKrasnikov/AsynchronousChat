@@ -7,17 +7,6 @@ from db import BaseMySQLModel
 from settings import log
 
 
-class Message:
-
-    async def save(self, user, msg, **kw):
-        result = await self.collection.insert({'user': user, 'msg': msg, 'time': datetime.now()})
-        return result
-
-    async def get_messages(self):
-        messages = self.collection.find().sort([('time', 1)])
-        return await messages.to_list(length=None)
-
-
 class RoomMySQL(BaseMySQLModel, ):
 
     id = pw.PrimaryKeyField(primary_key=True, null=False, )
@@ -27,6 +16,15 @@ class RoomMySQL(BaseMySQLModel, ):
     async def check_room(self, name, *args, **kwargs):
         try:
             return self.get(name=name, )
+        except self.DoesNotExist:
+            return False
+        except Exception as e:
+            log.debug(e)
+            return False
+
+    async def get_room_by_id(self, id, *args, **kwargs):
+        try:
+            return self.get(id=int(id), )
         except self.DoesNotExist:
             return False
         except Exception as e:
@@ -61,9 +59,8 @@ class MessageMySQL(BaseMySQLModel, ):
     class Meta:
         db_table = 'tbl_message'
 
-    def __init__(self, db=False, data={}, **kw):
-        if db:
-            self._db = db
+    def __init__(self, data={}, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         if data:
             self._user_id = data.get('user_id', False, )
@@ -73,17 +70,9 @@ class MessageMySQL(BaseMySQLModel, ):
 
             self._id = data.get('id', 0, )
 
-    async def check_user(self, **kw):
-        try:
-            return self.get(**{'login': self._login}, )
-        except Exception:
-            return False
+    async def get_messages(self, room_id=None, ):
+        return self.select().join(RoomMySQL).where(RoomMySQL.id == int(room_id) if room_id else int(self._room_id))
 
-    async def create_user(self, **kw):
-        user = await self.check_user()
-        if not user:
-            user = self.insert(login=self._login, password=self._password, email=self._email, )
-            user.execute()
-        else:
-            result = 'User exists'
-            return result
+    async def insert_message_to_db(self, msg, *args,  **kwargs):
+        message = self.insert(user=self._user_id, room=self._room_id, msg=msg, )
+        return message.execute()

@@ -31,6 +31,8 @@ class UserMySQL(BaseMySQLModel, ):
     async def check_user(self, **kw):
         try:
             return self.get(login=self._login, password=self._password, )
+        except self.DoesNotExist:
+            return False
         except Exception as e:
             log.debug(e)
             return False
@@ -38,16 +40,20 @@ class UserMySQL(BaseMySQLModel, ):
     async def get_user_by_id(self, **kw):
         try:
             return self.get(id=self._id, )
+        except self.DoesNotExist:
+            return False
         except Exception as e:
             log.debug(e)
             return False
 
     async def create_user(self, **kw):
         user = await self.check_user()
+
         if not user:
-            user = self.insert(login=self._login, password=self._password, email=self._email, )
-            user.execute()
+            with self._meta.database.transaction():
+                user = self.create(login=self._login, password=self._password, email=self._email, )
             return user
+
         else:
             result = 'User exists'
             return result
