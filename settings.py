@@ -19,12 +19,17 @@ DEBUG = env.bool('DEBUG', default=True)
 
 SITE_HOST = env.str('HOST')
 SITE_PORT = env.int('PORT')
-SECRET_KEY = env.str('SECRET_KEY')
+FERNET_KEY = env.str('FERNET_KEY')
+
 DB_HOST = env.str('DB_HOST')
-DB_PORT = int(env.str('DB_PORT'))
+DB_PORT = env.int('DB_PORT')
 DB_LOGIN = env.str('DB_LOGIN')
 DB_PASSWD = env.str('DB_PASSWD')
 DB_NAME = env.str('DB_NAME')
+
+ADMIN_LOGIN = env.str('ADMIN_LOGIN')
+ADMIN_PASSWD = env.str('ADMIN_PASSWD')
+ADMIN_EMAIL = env.str('ADMIN_EMAIL')
 
 MESSAGE_COLLECTION = 'messages'
 USER_COLLECTION = 'users'

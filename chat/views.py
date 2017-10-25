@@ -8,17 +8,6 @@ from settings import log
 from core.utils import redirect
 
 
-class Rooms(web.View):
-    @aiohttp_jinja2.template('chat/rooms.html')
-    async def get(self):
-        message = RoomMySQL()
-        session = await get_session(self.request)
-        if session.get('user') and session.get('room_id'):
-            pass
-        else:
-            redirect(self.request, 'login')
-
-
 class ChatList(web.View):
     @aiohttp_jinja2.template('chat/index.html')
     async def get(self):
@@ -26,7 +15,7 @@ class ChatList(web.View):
 
         if session.get('user') and session.get('room_id'):
 
-            message = MessageMySQL(data={'user_id': session['user'], 'room_id': session['room_id'], })
+            message = MessageMySQL(user_id=session['user'], room_id=session['room_id'])
             return {'messages': await message.get_messages(room_id=int(session.get('room_id')))}
 
         else:
@@ -39,7 +28,7 @@ class WebSocket(web.View):
         await ws.prepare(self.request)
 
         session = await get_session(self.request)
-        user = UserMySQL(data={'id': session.get('user')})
+        user = UserMySQL(id=session.get('user'))
         user = await user.get_user_by_id()
 
         for _ws in self.request.app['websockets']:
@@ -51,7 +40,7 @@ class WebSocket(web.View):
                 if msg.data == 'close':
                     await ws.close()
                 else:
-                    message = MessageMySQL(data={'user_id': session['user'], 'room_id': session['room_id'], })
+                    message = MessageMySQL(user_id=session['user'], room_id=session['room_id'])
                     message = await message.insert_message_to_db(msg=msg.data)
                     log.debug('result:%s' % message)
                     for _ws in self.request.app['websockets']:

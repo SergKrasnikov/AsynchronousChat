@@ -25,7 +25,7 @@ class Login(web.View):
         """ AJAX """
         data = await self.request.post()
 
-        user = UserMySQL(data)
+        user = UserMySQL(**data)
         result = await user.check_user()
 
         dict_response = {'content_type': 'application/json',
@@ -58,12 +58,21 @@ class SignIn(web.View):
 
     async def post(self, **kw):
         data = await self.request.post()
-        user = UserMySQL(data, )
+        user = UserMySQL(**data, )
         result = await user.create_user()
         if isinstance(result, UserMySQL):
+
             session = await get_session(self.request)
             set_session(session=session, user=result.id, )
+
+            dict_response = {'content_type': 'application/json',
+                             'status': 200,
+                             'charset': 'utf-8', }
+
+            dict_response.update({'text': json.dumps({'result': 'Ok', 'redirect': '/login/', }, ), }, )
+            return web.Response(**dict_response)
         else:
+
             return web.Response(content_type='application/json', text=convert_json(result))
 
 
@@ -84,7 +93,7 @@ class Admin(web.View):
     async def get(self, *args, **kwargs):
         session = await get_session(self.request, )
         if session.get('user'):
-            user = UserMySQL(data={'id': session['user'], }, )
+            user = UserMySQL(id=session['user'], )
             return {'content': 'Please create or select room',
                     'user': await user.get_user_by_id(),
                     'rooms': RoomMySQL.select(), }
@@ -94,9 +103,9 @@ class Admin(web.View):
     async def post(self, *args, **kwargs):
         data = await self.request.post()
 
-        room = RoomMySQL()
         name = data.get('name', False)
         if name:
+            room = RoomMySQL()
             await room.create_room(name=name)
 
             dict_response = {'content_type': 'application/json',
@@ -108,7 +117,32 @@ class Admin(web.View):
             return web.Response(**dict_response)
 
         room_id = data.get('room', False)
-        if room:
+        if room_id:
+            session = await get_session(self.request, )
+            set_session(session=session, room_id=room_id, )
+            redirect(self.request, 'main')
+
+        redirect(self.request, 'admin')
+
+
+class Room(web.View):
+
+    @aiohttp_jinja2.template('auth/room.html', )
+    async def get(self, *args, **kwargs):
+        session = await get_session(self.request, )
+        if session.get('user'):
+            user = UserMySQL(id=session['user'], )
+            return {'content': 'Please create or select room',
+                    'user': await user.get_user_by_id(),
+                    'rooms': RoomMySQL.select(), }
+        else:
+            raise web.HTTPForbidden(body=b'Forbidden', )
+
+    async def post(self, *args, **kwargs):
+        data = await self.request.post()
+
+        room_id = data.get('room', False)
+        if room_id:
             session = await get_session(self.request, )
             set_session(session=session, room_id=room_id, )
             redirect(self.request, 'main')

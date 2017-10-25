@@ -1,6 +1,7 @@
 import peewee_async
 import peewee as pw
-from settings import DB_HOST, DB_PORT, DB_LOGIN, DB_PASSWD, DB_NAME
+from settings import DB_HOST,DB_PORT, DB_LOGIN, DB_PASSWD, DB_NAME,\
+    ADMIN_LOGIN, ADMIN_PASSWD, ADMIN_EMAIL
 
 db = peewee_async.MySQLDatabase(host=DB_HOST, port=DB_PORT,
                                 user=DB_LOGIN, password=DB_PASSWD,
@@ -23,3 +24,6 @@ from chat.models import RoomMySQL, MessageMySQL
 
 # Only create the tables if they do not exist.
 db.create_tables([UserMySQL, RoomMySQL, MessageMySQL, ], safe=True)
+
+user = UserMySQL(login=ADMIN_LOGIN, password=ADMIN_PASSWD, email=ADMIN_EMAIL, is_admin=True)
+user.create_user()

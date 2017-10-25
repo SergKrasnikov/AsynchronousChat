@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{{ content }}
+<form autocomplete="on" name="room_select" action="." method="POST">
+    <div class="form-group">
+        <label>Select room
+            <select class="form-control" name="room">
+                <option disabled selected value="0">Select room name</option>
+                {% for room in rooms %}
+                    <option value="{{ room.id }}">{{ room.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <p>
+        <input class="btn btn-primary" id="submit_select" title="Enter" type="submit" value="Enter">
+    </p>
+</form>
+{% endblock %}

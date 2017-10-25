@@ -12,7 +12,6 @@ from routes import routes
 from middlewares import db_handler, authorize
 from settings import *
 import base64
-from cryptography import fernet
 
 
 async def on_shutdown(app):
@@ -32,10 +31,8 @@ async def shutdown(server, app, handler):
 
 async def init(loop):
 
-    fernet_key = fernet.Fernet.generate_key()
-    secret_key = base64.urlsafe_b64decode(fernet_key)
     middle = [
-        session_middleware(EncryptedCookieStorage(secret_key)),
+        session_middleware(EncryptedCookieStorage(base64.urlsafe_b64decode(FERNET_KEY))),
         authorize,
         db_handler,
     ]
@@ -52,7 +49,7 @@ async def init(loop):
 
     # route part
     for route in routes:
-        print(route[0], route[1], route[2], route[3])
+        # print(route[0], route[1], route[2], route[3])
         app.router.add_route(route[0], route[1], route[2], name=route[3])
     app.router.add_static('/static', 'static', name='static')
     # end route part
@@ -64,10 +61,6 @@ async def init(loop):
     if DEBUG:
         aiohttp_debugtoolbar.setup(app)
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
-
-    # db connect
-    app.db = db
-    # end db connect
 
     serv_generator = loop.create_server(handler, SITE_HOST, SITE_PORT)
     return serv_generator, handler, app

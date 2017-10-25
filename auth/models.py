@@ -16,17 +16,16 @@ class UserMySQL(BaseMySQLModel, ):
     class Meta:
         db_table = 'tbl_user'
 
-    def __init__(self, data={}, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if data:
-            self._login = data.get('login', False, )
-            self._password = data.get('password', False, )
+        self._login = kwargs.get('login', False, )
+        self._password = kwargs.get('password', False, )
 
-            self._is_admin = data.get('is_admin', False, )
+        self._is_admin = kwargs.get('is_admin', False, )
 
-            self._id = data.get('id', 0, )
-            self._email = data.get('email', False, )
+        self._id = kwargs.get('id', 0, )
+        self._email = kwargs.get('email', False, )
 
     async def check_user(self, **kw):
         try:

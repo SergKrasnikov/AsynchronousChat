@@ -21,7 +21,7 @@ $(document).ready(function(){
                     if (data.error){
                         showError(data.error)
                     }else{
-                        window.location.href = '/'
+                        window.location.href = data.redirect;
                     }
                 });
             }else{

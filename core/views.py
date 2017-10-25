@@ -10,8 +10,13 @@ class Redirect(web.View):
     async def get(self, *args, **kwargs):
         session = await get_session(self.request)
         if session.get('user'):
-            user = UserMySQL(data={'id': session['user'], }, )
+            user = UserMySQL(id=session['user'], )
             user = await user.get_user_by_id()
+
+            if isinstance(user, bool):
+                del session['user']
+                redirect(self.request, 'login')
+
             if user.is_admin:
                 redirect(self.request, 'admin')
             else:
